@@ -13,6 +13,7 @@ with parsed as (
             as is_verified,
         jsonb_array_length(coalesce(_raw -> 'parents', '[]'::jsonb)) > 1 as is_merge
     from {{ source('raw', 'github_commits') }}
+    where source_repository = '{{ env_var("GITHUB_REPOSITORY") }}'
 ),
 deduplicated as (
     select *,
