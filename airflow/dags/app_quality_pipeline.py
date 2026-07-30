@@ -1,4 +1,4 @@
-"""Daily, catchup-enabled resident application quality pipeline."""
+"""Near-real-time GitHub commit pipeline."""
 
 from datetime import datetime
 
@@ -10,8 +10,8 @@ with DAG(
     dag_id="github_commit_pipeline",
     description="Extract GitHub commits, transform with dbt, then test.",
     start_date=datetime(2026, 7, 1),
-    schedule="@daily",
-    catchup=True,
+    schedule="*/1 * * * *",
+    catchup=False,
     max_active_runs=1,
     default_args={"owner": "data-team", "retries": 1},
     tags=["github", "analytics"],

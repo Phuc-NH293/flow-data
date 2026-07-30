@@ -1,5 +1,6 @@
 # GitHub Commit Data Pipeline
 docker compose exec airflow airflow dags trigger github_commit_pipeline
+docker compose restart airflow
 Pipeline end-to-end lấy commit từ GitHub REST API, lưu vào PostgreSQL, transform
 bằng dbt, điều phối bằng Airflow và hiển thị bằng Metabase.
 
@@ -71,7 +72,7 @@ docker compose exec -T postgres psql \
 
 ### 2. Backfill
 
-DAG có `schedule="@daily"` và `catchup=True`. Chạy 7 ngày:
+DAG chạy mỗi phút và không catch up tự động. Chạy 7 ngày:
 
 ```bash
 docker compose exec airflow airflow dags backfill github_commit_pipeline \
