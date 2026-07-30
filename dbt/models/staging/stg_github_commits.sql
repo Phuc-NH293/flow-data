@@ -1,9 +1,9 @@
 with parsed as (
     select
         raw_id,
+        source_repository as repository,
         _ingested_at,
         _raw ->> 'sha' as commit_sha,
-        '{{ env_var("GITHUB_REPOSITORY") }}' as repository,
         _raw -> 'author' ->> 'login' as github_login,
         _raw -> 'commit' -> 'author' ->> 'name' as author_name,
         _raw -> 'commit' -> 'author' ->> 'email' as author_email,

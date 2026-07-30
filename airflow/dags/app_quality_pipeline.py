@@ -19,9 +19,11 @@ with DAG(
     extract = BashOperator(
         task_id="extract_window",
         bash_command=(
+            "start=$(date -u -d '1 day ago' --iso-8601=seconds); "
+            "end=$(date -u --iso-8601=seconds); "
             "python /opt/flow-data/extractor/extract_github.py "
-            "--start '{{ data_interval_start.isoformat() }}' "
-            "--end '{{ data_interval_end.isoformat() }}'"
+            "--start \"$start\" "
+            "--end \"$end\""
         ),
     )
 

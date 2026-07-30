@@ -72,7 +72,7 @@ docker compose exec -T postgres psql \
 
 ### 2. Backfill
 
-DAG chạy mỗi phút và không catch up tự động. Chạy 7 ngày:
+DAG chạy mỗi phút và mỗi lần quét lại 24 giờ gần nhất để bắt commit mới:
 
 ```bash
 docker compose exec airflow airflow dags backfill github_commit_pipeline \

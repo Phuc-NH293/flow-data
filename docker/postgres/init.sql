@@ -4,6 +4,7 @@ CREATE SCHEMA IF NOT EXISTS mart;
 
 CREATE TABLE IF NOT EXISTS raw.github_commits (
     raw_id BIGSERIAL PRIMARY KEY,
+    source_repository TEXT NOT NULL,
     _raw JSONB NOT NULL,
     _ingested_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

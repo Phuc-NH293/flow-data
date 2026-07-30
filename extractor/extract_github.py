@@ -86,8 +86,11 @@ def main() -> None:
                     if not args.start <= commit_time < end:
                         continue
                     cursor.execute(
-                        "insert into raw.github_commits (_raw) values (%s)",
-                        (Json(payload),),
+                        """
+                        insert into raw.github_commits (source_repository, _raw)
+                        values (%s, %s)
+                        """,
+                        (repository, Json(payload)),
                     )
                     accepted += 1
                 except (KeyError, TypeError, ValueError) as exc:
