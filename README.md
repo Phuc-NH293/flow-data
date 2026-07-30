@@ -1,5 +1,5 @@
 # GitHub Commit Data Pipeline
-
+docker compose exec airflow airflow dags trigger github_commit_pipeline
 Pipeline end-to-end lấy commit từ GitHub REST API, lưu vào PostgreSQL, transform
 bằng dbt, điều phối bằng Airflow và hiển thị bằng Metabase.
 
