@@ -3,7 +3,7 @@ docker compose exec airflow airflow dags trigger github_commit_pipeline
 docker compose restart airflow
 Pipeline end-to-end lấy commit từ GitHub REST API, lưu vào PostgreSQL, transform
 bằng dbt, điều phối bằng Airflow và hiển thị bằng Metabase.
-
+ok phuc nhe ok ok 
 ## Nguồn và grain
 
 - Nguồn: `GET /repos/{owner}/{repo}/commits`.
