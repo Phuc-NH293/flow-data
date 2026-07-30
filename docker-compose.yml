@@ -1,0 +1,104 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  bootstrap:
+    build: .
+    user: "0:0"
+    environment: &pipeline-env
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      DBT_PROFILES_DIR: /opt/flow-data/dbt
+      DBT_LOG_PATH: /tmp/dbt-logs
+      DBT_TARGET_PATH: /tmp/dbt-target
+      DASHBOARD_DB_USER: ${DASHBOARD_DB_USER}
+      DASHBOARD_DB_PASSWORD: ${DASHBOARD_DB_PASSWORD}
+    volumes:
+      - ./:/opt/flow-data
+    working_dir: /opt/flow-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - bash
+      - -ec
+      - |
+        for day in 2026-07-01 2026-07-02 2026-07-03 2026-07-04 2026-07-05 2026-07-06 2026-07-07; do
+          python extractor/extract_github.py --start "$${day}T00:00:00+00:00" --end "$${day}T00:00:00+00:00" --end-next-day
+        done
+        dbt run --project-dir dbt
+        python scripts/setup_dashboard_reader.py
+        dbt test --project-dir dbt
+    restart: "no"
+
+  airflow:
+    build: .
+    environment:
+      <<: *pipeline-env
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/flow-data/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+      AIRFLOW_USERNAME: ${AIRFLOW_USERNAME}
+      AIRFLOW_PASSWORD: ${AIRFLOW_PASSWORD}
+    volumes:
+      - ./:/opt/flow-data
+      - airflow_logs:/opt/airflow/logs
+    working_dir: /opt/flow-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      bootstrap:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    command:
+      - bash
+      - -ec
+      - |
+        airflow db migrate
+        airflow users create \
+          --username "$${AIRFLOW_USERNAME}" \
+          --password "$${AIRFLOW_PASSWORD}" \
+          --firstname Data --lastname Engineer \
+          --role Admin --email admin@example.local || true
+        airflow scheduler &
+        exec airflow webserver --port 8080
+
+  metabase:
+    image: metabase/metabase:v0.56.5
+    environment:
+      MB_DB_FILE: /metabase-data/metabase.db
+    volumes:
+      - metabase_data:/metabase-data
+    ports:
+      - "3001:3000"
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+  airflow_logs:
+  metabase_data:

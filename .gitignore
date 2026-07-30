@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+logs/
+dbt/logs/
+dbt/target/
+dbt/dbt_packages/
+data/source/
+!data/source/.gitkeep

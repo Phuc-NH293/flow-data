@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: stg_github_commits
+    description: One row per unique GitHub commit.
+    columns:
+      - name: commit_sha
+        tests: [not_null, unique]
+      - name: committed_at_utc
+        tests: [not_null]
+      - name: repository
+        tests: [not_null]
+      - name: author_key
+        tests: [not_null]
+
+  - name: agg_commit_activity_daily
+    description: One row per author, repository and UTC day.
+    tests:
+      - unique_combination:
+          combination_of_columns:
+            - commit_date
+            - repository
+            - author_key
+    columns:
+      - name: commit_date
+        tests: [not_null]
+      - name: commit_count
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 1
