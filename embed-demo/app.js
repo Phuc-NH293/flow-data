@@ -145,8 +145,8 @@ function render() {
     data: {
       labels: extendedLabels,
       datasets: [
-        { label: 'Merge', data: extendedSeries.map(point => point.fake ? point.merges : point.merges), backgroundColor: '#f59e72' },
-        { label: 'Verified', data: extendedSeries.map(point => point.fake ? point.verified : point.verified), backgroundColor: '#71d3b4' },
+        { label: 'Real merge', data: extendedSeries.map(point => point.fake ? null : point.merges), backgroundColor: '#f59e72' },
+        { label: 'Real verified', data: extendedSeries.map(point => point.fake ? null : point.verified), backgroundColor: '#71d3b4' },
         { type: 'line', label: 'Demo merge trend', data: extendedSeries.map(point => point.merges), borderColor: '#f59e72', backgroundColor: '#f59e7233', fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2 },
         { type: 'line', label: 'Demo verified trend', data: extendedSeries.map(point => point.verified), borderColor: '#71d3b4', backgroundColor: '#71d3b422', fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2 },
       ],
@@ -158,8 +158,9 @@ function render() {
     data: {
       labels: extendedLabels,
       datasets: [{
-        label: 'Verified rate',
+        label: 'Real verified rate',
         data: extendedSeries.map(point => {
+          if (point.fake) return null;
           const total = point.commits || 0;
           return total ? (point.verified / total) * 100 : 0;
         }),
