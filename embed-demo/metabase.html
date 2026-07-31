@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Metabase embed demo</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .embed-shell{max-width:1240px;margin:auto;padding:40px 24px}
+    .embed-frame{border:1px solid #293244;border-radius:14px;overflow:hidden;background:#171c27;min-height:760px}
+    .embed-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:#9ca8bb;font-size:13px;margin:12px 0 18px}
+    .pill{border:1px solid #344156;border-radius:999px;padding:6px 10px}
+    metabase-dashboard{display:block;width:100%;min-height:760px}
+  </style>
+</head>
+<body>
+  <main class="embed-shell">
+    <header>
+      <div class="eyebrow">METABASE EMBED</div>
+      <h1>Commit analytics dashboard</h1>
+      <div class="sub">Guest embed with live filters and chart cards provisioned from code.</div>
+      <div class="embed-meta">
+        <span class="pill" id="status">Loading embed...</span>
+        <a class="pill" href="/">Open local preview</a>
+      </div>
+    </header>
+    <section class="embed-frame">
+      <metabase-dashboard id="dashboard" with-title="true" with-downloads="false"></metabase-dashboard>
+    </section>
+  </main>
+  <script defer src="http://localhost:3001/app/embed.js"></script>
+  <script src="/metabase.js"></script>
+</body>
+</html>

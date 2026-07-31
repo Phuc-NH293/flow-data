@@ -145,3 +145,18 @@ khoản quản trị, rồi kết nối PostgreSQL bằng các thông tin:
 
 Chọn schema `mart`, sau đó tạo các câu hỏi/dashboard: tổng commit theo ngày,
 tỷ lệ verified, top author và bảng hoạt động author.
+
+## Metabase embed demo
+
+Mình đã provision sẵn một dashboard Metabase qua API và nhúng nó vào trang demo:
+
+- Trang xem embed: `http://localhost:8090/metabase.html`
+- Dashboard Metabase: `Commit Analytics Embed`
+- Dashboard id hiện tại: `4`
+
+Các file chính:
+
+- `scripts/provision_metabase_embed.py`: tạo dashboard, cards, filter mappings và bật embedding.
+- `embed-demo/server.py`: phát JWT cho guest embed và trả config dashboard id.
+- `embed-demo/metabase.html`: trang nhúng Metabase dashboard.
+- `embed-demo/metabase.js`: nạp config và gắn dashboard id.
