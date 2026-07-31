@@ -98,6 +98,25 @@ services:
       bootstrap:
         condition: service_completed_successfully
 
+  demo:
+    build: .
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      DASHBOARD_DB_USER: ${DASHBOARD_DB_USER}
+      DASHBOARD_DB_PASSWORD: ${DASHBOARD_DB_PASSWORD}
+      DEMO_PORT: "8090"
+    volumes:
+      - ./:/opt/flow-data
+    working_dir: /opt/flow-data
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    ports:
+      - "8090:8090"
+    command: ["python", "embed-demo/server.py"]
+
 volumes:
   postgres_data:
   airflow_logs:

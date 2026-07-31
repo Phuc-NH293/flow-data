@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Commit Analytics</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">DATA PIPELINE / LIVE MART</p><h1>Commit Analytics</h1><p class="sub">GitHub → PostgreSQL → dbt → Metabase</p></header>
+    <section class="filters"><label>Author <select id="author"><option value="">All authors</option></select></label><label>Repository <select id="repo"><option value="">All repositories</option></select></label></section>
+    <section class="cards" id="cards"></section>
+    <section class="grid"><article><h2>Commit trend</h2><canvas id="trend"></canvas></article><article><h2>Top contributors</h2><canvas id="authors"></canvas></article></section>
+    <section class="grid"><article><h2>Verified vs merge rate</h2><canvas id="quality"></canvas></article><article><h2>Activity detail</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Author</th><th>Commits</th><th>Merges</th><th>Verified</th></tr></thead><tbody id="rows"></tbody></table></div></article></section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
